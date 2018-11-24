@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="~{fragments/header::header}">
+</head>
+<body style="background:url('/static/images/huo.jpg') no-repeat;background-size: cover">
+    <!--头部-->
+    <div th:replace="~{fragments/header::top}"></div>
+    <!--中间部分-->
+    <div class="container">
+        <!--博客部分-->
+        <div class="col-md-8">
+            <div style="border-bottom:5px #F5F5F5 solid;padding:0px 10px 10px 10px;margin-top: 10px;" th:each="b:${blogs}">
+                <div class="column_bj">
+                    <!--标题-->
+                    <div class="row_bj">
+                        <img src="img/qq.jpg" th:src="${b.user.avatar}" class="img-circle tx">
+                        <h2 class="text-primary" style="margin-left: 10px;"><a href="/blog/" th:href="'/blog/'+${b.id}" th:text="${b.title}">大话Spirng Cloud微服务</a></h2>
+                    </div>
+                    <!--博客摘要-->
+                    <div class="text-muted" th:text="'&nbsp;&nbsp;&nbsp;&nbsp;'+${b.summary}">
+                        xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    </div>
+                    <br>
+                    <!--底部-->
+                    <!--底部-->
+                    <div class="foot row_bj">
+                        <span class="text-info"><a href="" th:href="'/blog/'+${b.user.username}+'/index'" th:text="${b.user.name}">爱哭的毛毛虫</a></span>发表于<span th:text="${#dates.format(b.createTime,'yyyy-MM-dd')}">2018-09-27</span>
+                        <span style="margin-left: 20px;" class="glyphicon glyphicon-eye-open" th:text="${b.readSize}">100</span>
+                        <a href="#" style="color:#000" class="like" th:attr="url='/blog/like/'+${b.id}"><span style="margin-left: 20px;" class="glyphicon glyphicon-thumbs-up" th:text="${b.likeSize}">100</span></a>
+                        <span style="margin-left: 20px;" class="glyphicon glyphicon-comment" th:text="${b.commentSize}">100</span>
+                    </div>
+                </div>
+            </div>
+            <!--分页-->
+            <div style="display: flex;justify-content: center;">
+                <ul class="pagination" id="page">
+                    <!--<li><a href="#">&laquo;</a></li>
+                    <li><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#">&raquo;</a></li>-->
+                </ul>
+            </div>
+        </div>
+
+        <!--侧边栏-->
+        <div class="col-md-4 column_bj">
+            <!--热门标签-->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-fire"></span>&nbsp;热门标签
+                    </h3>
+                </div>
+                <div class="panel-body bqSize" id="tags">
+                </div>
+            </div>
+            <!--热门用户-->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-fire"></span>&nbsp;热门用户
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <a th:each="a:${avatars}" th:href="${'/blog/'+a[1]+'/index'}"> <img src="img/qq.jpg" th:src="${a[0]}" class="img-circle tx" style="margin-left:10px;"></a>
+                </div>
+            </div>
+            <!--热门文章-->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-fire"></span>&nbsp;热门文章
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group" style="width:100%;">
+                        <li class="list-group-item" th:each="t:${titles}"><a th:href="'/blog/'+${t.id}" th:text="${t.title}">免费域名注册</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--底部-->
+    <div th:replace="~{fragments/header::font}"></div>
+
+<!--分页-->
+<script th:inline="javascript">
+    $(function(){
+        //当前页码
+        var page = [[${page}]];
+        //总页码
+        var pageCount = [[${pageCount}]];
+        //标签
+        var tags = [[${tags}]];
+        //分页
+        if(page==1){
+            $("#page").append("<li><a href='/blog/fire?page=1' style='cursor:pointer;pointer-events: none'>&laquo;</a></li>");
+        }else{
+            $("#page").append("<li><a href='/blog/fire?page="+(page-1)+"'>&laquo;</a></li>");
+        }
+        var ym =Math.floor((page-1)/5)*5;
+        for(var i=1;i<6;i++){
+            ym = ym+i;
+            var url='/blog/fire?page='+ym+'&limit=4';
+            if(ym==page){
+                $("#page").append("<li  class='active'><a href='"+url+"'>"+ym+"</a></li>");
+            }else{
+                $("#page").append("<li><a href='"+url+"'>"+ym+"</a></li>");
+            }
+            ym =Math.floor((page-1)/5)*5;
+        }
+        if(page==pageCount){
+            $("#page").append("<li><a href='#' style='cursor:pointer;pointer-events: none'>&raquo;</a></li>");
+        }else{
+            $("#page").append("<li><a href='/blog/fire?page="+(page+1)+"'>&raquo;</a></li>");
+        }
+
+        //标签
+        for(var i = 0;i<tags.length;i++){
+            switch (i%6){
+                case 0:
+                    $("#tags").append(" <span class='label label-default'>"+tags[i]+"</span>");
+                    break;
+                case 1:
+                    $("#tags").append(" <span class='label label-primary'>"+tags[i]+"</span>");
+                    break;
+                case 2:
+                    $("#tags").append(" <span class='label label-success'>"+tags[i]+"</span>");
+                    break;
+                case 3:
+                    $("#tags").append(" <span class='label label-info'>"+tags[i]+"</span>");
+                    break;
+                case 4:
+                    $("#tags").append(" <span class='label label-warning'>"+tags[i]+"</span>");
+                    break;
+                case 5:
+                    $("#tags").append(" <span class='label label-danger'>"+tags[i]+"</span>");
+                    break;
+            }
+
+        }
+        $(".like").click(function () {
+            var url = $(this).attr("url");
+            var a = $(this);
+            var num =  parseInt(a.text())+1;
+            $.get(url,function (data) {
+                if(data=="success"){
+                    var t = '<span style="margin-left: 20px;" class="glyphicon glyphicon-thumbs-up" th:text="${b.likeSize}">'+num+'</span>';
+                    a.html(t);
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

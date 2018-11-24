@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="~{fragments/header::header}">
+</head>
+<body>
+<!--头部-->
+<div th:replace="~{fragments/header::top}"></div>
+<!--中间部分-->
+<div class="container">
+    <div class="row">
+        <p th:text="${message}">
+
+        </p>
+    </div>
+</div>
+<!--底部-->
+<div class="container-fluid nav2">
+    <span>天涯海角</span>
+</div>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="~{fragments/header::header}">
+</head>
+<body style="background-image:url('static/images/zcbackground.jpg'); background-repeat:no-repeat; background-size: cover" >
+<!--头部-->
+<div th:replace="~{fragments/header::top}"></div>
+    <div class="container">
+        <div class="col-md-12">
+            <h1 class="text-primary col-md-offset-5">天涯海角</h1>
+        </div>
+        <form class="form-horizontal" role="form" th:action="@{/register}" th:method="post">
+            <div class="form-group">
+                <label for="name" class="col-md-2 col-md-offset-2 control-label">昵称</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="请输入昵称" maxlength="10" minlength="4" required>
+                    <label for="password" class="control-label text-danger" id="name2">(昵称已经注册)</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="username" class="col-md-2 col-md-offset-2 control-label">用户名</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="请输入用户名" maxlength="10" minlength="4" required>
+                    <label for="password" class="control-label text-danger" id="username2">(用户名已经注册)</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-md-2 col-md-offset-2 control-label">密码</label>
+                <div class="col-md-4">
+                    <!--pattern="[a-zA-Z\d]{6,16}" -->
+                    <input type="password" class="form-control" id="password" name="password" placeholder="请输入密码" required>
+                    <label for="password" class="control-label text-danger" id="password2">(6-16位字母数字下划线)</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 col-md-offset-2 control-label">邮箱</label>
+                <div class="col-md-4">
+                    <input type="email" class="form-control" id="email" name="email" required placeholder="请输入邮箱">
+                    <label class="control-label text-danger" id="email2">(邮箱已经注册)</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 col-md-offset-2 control-label">验证码</label>
+                <div class="col-md-3">
+                    <div class="row_bj" style="width:100%;">
+                        <input type="text" class="form-control" id="code" name="code" required placeholder="请输入验证码">
+                        <img alt="验证码" onclick = "this.src='/getCode?d='+new Date()*1" src="/getCode" style="margin-left:20px;"/>
+                    </div>
+                    <label class="control-label text-danger" id="code2">(验证码错误)</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-4 col-md-2">
+                    <button type="submit" class="btn btn-default" disabled="true" id="zc">注册</button>
+                </div>
+            </div>
+        </form>
+    </div>
+<!--底部-->
+<!--底部-->
+<div class="container-fluid nav2">
+    <span>天涯海角</span>
+</div>
+<!--异步验证-->
+<script>
+    $(function () {
+        var name = $("#name");
+        var username = $("#username");
+        var password = $("#password");
+        var email = $("#email");
+        var code = $("#code");
+        var name2 = $("#name2");
+        var username2 = $("#username2");
+        var password2 = $("#password2");
+        var email2 = $("#email2");
+        var code2 = $("#code2");
+        //用来判断注册信息是否填写完整才可以提交
+        var zc = $("#zc");
+        var nameSuccess = false;
+        var usernameSuccess = false;
+        var passwordSuccess = false;
+        var emailSuccess = false;
+        var codeSuccess = false;
+        name2.hide();
+        username2.hide();
+        password2.hide();
+        email2.hide();
+        code2.hide();
+        //首先将光标放到昵称框
+        name.focus();
+        //昵称失去焦点异步请求
+        name.blur(function () {
+            var value = name.val();
+            if(value!=null&&value.length>1){
+                $.ajax({
+                    url:"/check",
+                    type:"GET",
+                    data:{
+                        "name":value
+                    },
+                    success:function (data) {
+                        if(!data){
+                            nameSuccess = false;
+                            name2.show();
+                            name.focus();
+                            check_error();
+                        }else{
+                            nameSuccess = true;
+                            name2.hide();
+                            check();
+                        }
+                    },
+                    error:function (data) {
+                        alert("服务器出错了");
+                    }
+                });
+            }
+        });
+
+        //用户名失去焦点异步请求
+        username.blur(function () {
+            var value = username.val();
+            if(value!=null&&value.length>1){
+                $.ajax({
+                    url:"/check",
+                    type:"GET",
+                    data:{
+                        "username":value
+                    },
+                    success:function (data) {
+                        if(!data){
+                            usernameSuccess = false;
+                            username2.show();
+                            username.focus();
+                            check_error();
+                        }else{
+                            usernameSuccess = true;
+                            username2.hide();
+                            check();
+                        }
+                    },
+                    error:function (data) {
+                        alert("服务器出错了");
+                    }
+                });
+            }
+        });
+
+        //密码失去焦点异步请求
+        password.blur(function () {
+            var value = password.val();
+            if(value==null||value.length<6||value.length>16){
+                passwordSuccess = false;
+                password2.show();
+                password.focus();
+                check_error();
+            }else{
+                passwordSuccess = true;
+                password2.hide();
+                check();
+            }
+        });
+
+        //邮箱失去焦点异步请求
+        email.blur(function () {
+            var value = email.val();
+            if(value!=null||value.length>1){
+                $.ajax({
+                    url:"/check",
+                    type:"GET",
+                    data:{
+                        "email":value
+                    },
+                    success:function (data) {
+                        if(!data){
+                            emailSuccess = false;
+                            email2.show();
+                            email.focus();
+                            check_error();
+                        }else{
+                            emailSuccess = true;
+                            email2.hide();
+                            check();
+                        }
+                    },
+                    error:function (data) {
+                        alert("服务器出错了");
+                    }
+                });
+            }
+        });
+
+        //验证码失去焦点异步请求
+        code.blur(function () {
+            var value = code.val();
+            if(value!=null&&value.length>1){
+                $.ajax({
+                    url:"/checkCode",
+                    type:"GET",
+                    data:{
+                        "code":value
+                    },
+                    success:function (data) {
+                        if(!data){
+                            codeSuccess = false;
+                            code2.show();
+                            code.focus();
+                            check_error();
+                        }else{
+                            codeSuccess = true;
+                            code2.hide();
+                            check();
+                        }
+                    },
+                    error:function (data) {
+                        alert("服务器出错了");
+                    }
+                });
+            }
+        });
+        function check() {
+            if(nameSuccess&&usernameSuccess&&passwordSuccess&&emailSuccess&&codeSuccess){
+                zc.removeAttr("disabled");
+                zc.attr("disabled",false);
+            }
+        }
+
+        function check_error() {
+            zc.removeAttr("disabled");
+            zc.attr("disabled",true);
+        }
+    })
+</script>
+</body>
+</html>

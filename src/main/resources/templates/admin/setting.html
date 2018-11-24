@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}" media="all">
+    <script src="layui/layui.js" th:src="@{/layui/layui.js}"></script>
+    <script src="/static/js/jquery-2.1.0.min.js" th:src="@{/js/jquery-2.1.0.min.js}"></script>
+    <script src="/static/bootstrap3.3.7/js/bootstrap.min.js" th:src="@{/bootstrap3.3.7/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" href="/static/bootstrap3.3.7/css/bootstrap.min.css" th:href="@{/bootstrap3.3.7/css/bootstrap.min.css}">
+</head>
+<body>
+    <div class="container" style="margin-top: 40px;">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">网站标题</label>
+                <div class="layui-input-block">
+                    <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="update">立即修改</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        //Demo
+        layui.use('form', function(){
+            var form = layui.form;
+            //监听提交action="/admins/setting" method="post"
+            form.on('submit(update)', function(data){
+                $.ajax({
+                   url:"/admins/setting",
+                   type:"post",
+                   data:{
+                       "title":data.field['title']
+                   },
+                    success:function (data) {
+                        layer.msg("更新成功");
+                        parent.location.reload();
+                    },
+                    error:function (data) {
+                        layer.msg("更新失败");
+                        parent.location.reload();
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>

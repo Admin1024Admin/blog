@@ -1,0 +1,307 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <script src="/static/js/jquery-2.1.0.min.js" th:src="@{/js/jquery-2.1.0.min.js}"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/js/ueditor.config.js" th:src="@{/js/ueditor.config.js}"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/js/ueditor.all.min.js" th:src="@{/js/ueditor.all.min.js}"> </script>
+    <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+    <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+    <script type="text/javascript" charset="utf-8" src="/static/js/zh-cn.js" th:src="@{/js/zh-cn.js}"></script>
+    <script src="/static/bootstrap3.3.7/js/bootstrap.min.js" th:src="@{/bootstrap3.3.7/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="/static/js/jquery.tagsinput.js" th:src="@{/js/jquery.tagsinput.js}"></script>
+    <link rel="stylesheet" href="/static/bootstrap3.3.7/css/bootstrap.min.css" th:href="@{/bootstrap3.3.7/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="/static/css/jquery.tagsinput.css" th:href="@{/css/jquery.tagsinput.css}">
+    <title th:text="${session.netName}"></title>
+
+    <style type="text/css">
+        /*竖布局*/
+        .column_bj{
+            display: flex;
+            flex-direction: column;
+            margin-top:20px;
+        }
+        /*横向布局*/
+        .row_bj{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        /*头像*/
+        .tx{
+            height:70px;
+            width:70px;
+        }
+    </style>
+    <script>
+        $(function(){
+            //标签
+            $('#tags_1').tagsInput({
+                width: 'auto',
+                onChange: function(elem, elem_tags)
+                {
+                    var languages = ['php','ruby','javascript'];
+                    $('.tag', elem_tags).each(function()
+                    {
+                        if($(this).text().search(new RegExp('\\b(' + languages.join('|') + ')\\b')) >= 0)
+                            $(this).css('background-color', 'yellow');
+                    });
+                }
+            });
+        })
+    </script>
+</head>
+<body style="background:url('/static/images/edit.jpg') no-repeat;background-size: cover">
+<!--头部-->
+<div th:replace="~{fragments/header::top}"></div>
+<!--主体-->
+<div class="container">
+    <!--左边-->
+    <div class="col-md-3">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">博客设置</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row_bj">
+                            <img src="img/qq.jpg" class="img-circle tx" th:src="${user.avatar}">
+                            <span style="font-size: 16px;margin-left: 10px;" th:text="${user.name}">爱哭的毛毛虫</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <ul class="list-group" id="typeUl">
+                            <li class="list-group-item">
+                                博客分类
+                            </li>
+                            <li class="list-group-item" th:each="t:${types}" th:utext="'<a href=/bolg/type/'+${t.id}+'>'+${t.typeName}+'</a>'">
+                                springboot
+                            </li>
+                            <!--<li class="list-group-item">-->
+                                <!--springcloud-->
+                            <!--</li>-->
+                            <li class="list-group-item">
+                                <a data-toggle="modal" data-target="#myModal" style="font-size:20px;;">+</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--右边-->
+    <div class="col-md-9">
+        <form  class="form-horizontal">
+            <!--标题-->
+            <div class="form-group">
+                <label for="title" class="col-md-1 control-label" style="text-align: right;">标题</label>
+                <div class="col-md-11">
+                    <input type="text" class="form-control" id="title" placeholder="请输入标题" name="title">
+                </div>
+            </div>
+            <!--摘要-->
+            <div class="form-group">
+                <label for="summary" class="col-md-1 control-label" style="text-align: right;">摘要</label>
+                <div class="col-md-11">
+                    <input type="text" class="form-control" id="summary" placeholder="请输入摘要" name="summary">
+                </div>
+            </div>
+            <!--正文-->
+            <div class="form-group">
+                <label for="editor" class="col-md-1 control-label" style="text-align: right;">内容</label>
+                <div id="editor" type="text/plain" style="height:500px;" class="col-md-11"></div>
+            </div>
+
+            <!--标签-->
+            <div class="form-group">
+                <label class="col-md-1 control-label" style="text-align: right;">标签</label>
+                <div class="col-md-11">
+                    <input id="tags_1" type="text" class="tags" placeholder="输入标签"/></p>
+                </div>
+            </div>
+            <!--分类-->
+            <div class="form-group">
+                <label  class="col-md-1 control-label">分类</label>
+                <div class="col-md-11">
+                    <select class="form-control" id="type">
+                        <option value="">--请选择分类--</option>
+                    </select>
+                </div>
+            </div>
+            <!--发布-->
+            <div class="com-md-12" style="display: flex;justify-content: center;">
+                <button type="button" class="btn btn-info" id="fabu">发布</button>
+                <button type="button" class="btn btn-default" style="margin-left: 20px;" id="qx">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!--<div id="btns">-->
+    <!--<div>-->
+        <!--<button onclick="getContent()">获得内容</button>-->
+        <!--<button onclick="getContentTxt()">获得纯文本</button>-->
+        <!--<button onclick="getPlainTxt()">获得带格式的纯文本</button>-->
+    <!--</div>-->
+<!--</div>-->
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">添加分类</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label  class="col-sm-2 control-label">分类名称</label>
+                        <div class="col-sm-10">
+                            <input type="hidden" name="uid" id="uid" th:value="${user.id}">
+                            <input type="text" class="form-control" name="typeName" id="typeName" placeholder="请输入分类名称">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="add">添加</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script type="text/javascript" th:inline="javascript">
+    function isNull(str) {
+        if ( str == "" ) {
+            return true;
+        }
+        var regu = "^[ ]+$";
+        var re = new RegExp(regu);
+        return re.test(str);
+    }
+    //实例化编辑器
+    //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+    var ue = UE.getEditor('editor');
+    var content =null;
+    var html_content =null;
+    function getContent() {
+//        var arr = [];
+//        arr.push("使用editor.getContent()方法可以获得编辑器的内容");
+//        arr.push("内容为：");
+//        arr.push(UE.getEditor('editor').getContent());
+//        alert(arr.join("\n"));
+        html_content = UE.getEditor('editor').getContent();
+    }
+    function getPlainTxt() {
+//        var arr = [];
+//        arr.push("使用editor.getPlainTxt()方法可以获得编辑器的带格式的纯文本内容");
+//        arr.push("内容为：");
+//        arr.push(UE.getEditor('editor').getPlainTxt());
+//        alert(arr.join('\n'))
+        return ue.getPlainTxt();
+    }
+
+
+    function getContentTxt() {
+//        var arr = [];
+//        arr.push("使用editor.getContentTxt()方法可以获得编辑器的纯文本内容");
+//        arr.push("编辑器的纯文本内容为：");
+//        arr.push(UE.getEditor('editor').getContentTxt());
+//        alert(arr.join("\n"));
+        content =  UE.getEditor('editor').getContentTxt();
+    }
+    $(function() {
+        //渲染分类
+        var type = [[${types}]];
+        var tyleSelect = $("#type");
+        for(var i=0;i<type.length;i++){
+            tyleSelect.append("<option value='"+type[i]['id']+"'>"+type[i]['typeName']+"</option>");
+        }
+
+        //异步添加个人分类
+        $("#add").click(function () {
+            var uid= $("#uid").val();
+            var typeName = $("#typeName").val();
+            if(typeName==""||typeName.length<1){
+                alert("请输入分类名称");
+            }else{
+                $.ajax({
+                   url:"/user/addType",
+                   type:"POST",
+                   data:{
+                       "uid":uid,
+                       "typeName":typeName
+                    },
+                    success:function(data){
+                       alert(data)
+                        if(data["success"]){
+                           alert("添加成功");
+                            window.location.reload();
+                        }
+                    },
+                    error:function(){
+                        alert("添加失败");
+                    }
+                });
+            }
+        })
+
+        //发布
+        $("#fabu").click(function(){
+            var title = $("#title").val();
+            var summary = $("#summary").val();
+            var tags = $("#tags_1").val();
+            var type = $("#type option:selected").val();
+            getContent();
+            getContentTxt();
+            if (isNull(title)) {
+                alert("标题不可以为空!");
+                $("#title").focus();
+                return;
+            }
+            if (isNull(summary)) {
+                alert("摘要不可以为空!");
+                $("#summary").focus();
+                return;
+            }
+            if (isNull(content)) {
+                alert("内容不可以为空!");
+                $("#editor").focus();
+                return;
+            }
+            if (isNull(tags)) {
+                alert("标签不可以为空!");
+                $("#tags_1").focus();
+                return;
+            }
+            if (isNull(type)) {
+                alert("请选择分类!");
+                $("#type").focus();
+                return;
+            }
+            $.ajax({
+                url:"/blog/save",
+                type:"POST",
+                data:{
+                    'content':content,
+                    'htmlContent':html_content,
+                    'title':title,
+                    'summary':summary,
+                    'tags':tags,
+                    'typeId':type,
+                    'username':[[${user.username}]]
+                },
+                success:function(data){
+                    alert(data);
+                },
+                error:function(){
+                    alert("失败");
+                }
+            })
+        })
+    });
+</script>
+</body>
+</html>

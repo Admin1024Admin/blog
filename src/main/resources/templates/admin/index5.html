@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="~{fragments/header::header}">
+</head>
+<body>
+<!--头部-->
+<div th:replace="~{fragments/header::top}"></div>
+
+<!--中间主体部分-->
+<div class="container">
+    <!--左边的导航栏-->
+    <div class="col-md-4">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">菜单</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-pills nav-stacked">
+                    <li th:each="m:${menus}" class="menu" th:class="${m.active}?'active'">
+                        <a href="#" th:href="${m.url}" th:text="${m.name}">权限管理</a>
+                    </li>
+                </ul>​
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7 col-md-offset-1">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <td colspan="5">
+                    <div>
+                        <form class="navbar-form navbar-left" role="search" th:action="@{/user/page}" th:method="get">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索" name="keyword">
+                            </div>
+                            <button type="submit" class="btn glyphicon glyphicon-search"></button>
+                            <button type="button" class="btn glyphicon glyphicon-plus" id="add"></button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>序号</td>
+                <td>账号</td>
+                <td>姓名</td>
+                <td>邮箱</td>
+                <td>角色</td>
+                <td>操作</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u:${users}">
+                <td th:text="${u.id}">1</td>
+                <td th:text="${u.username}">admin</td>
+                <td th:text="${u.name}">123</td>
+                <td th:text="${u.email}">2372491762@qq.com</td>
+                <td th:text="${u.authorities}">2372491762@qq.com</td>
+                <td>
+                    <button type="button" class="btn glyphicon glyphicon-pencil" th:id="'edit'+${u.id}"></button>
+                    <button type="button" class="btn glyphicon glyphicon-trash" th:id="'del'+${u.id}"></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!--分页-->
+        <div>
+            <ul class="pagination" id="page">
+            </ul>
+        </div>
+    </div>
+</div>
+<!--底部-->
+<div th:replace="~{fragments/header::font}">
+</div>
+<!--修改框model-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="form-horizontal" th:action="@{/user/save}" th:method="post">
+                <input type="hidden" name="id" id="id">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">修改</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="username" class="col-sm-2 control-label">账号</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="username" name="username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="col-sm-2 control-label">姓名</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="name" name="name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="col-sm-2 control-label">邮箱</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="email" name="email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="myselect" class="col-sm-2 control-label">角色</label>
+                        <div class="col-sm-10">
+                            <select id="myselect"  class="form-control form-control-chosen" data-placeholder="请选择">
+                                <option name="authorityId" value="1">管理员</option>
+                                <option name="authorityId" value="2">博主</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="tj">提交更改</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<!--添加框model-->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="form-horizontal" th:action="@{/user/save}" th:method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">添加</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="username" class="col-sm-2 control-label">账号</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="username" id="username2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" name="password" id="password2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="col-sm-2 control-label">姓名</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="name" id="name2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="col-sm-2 control-label">邮箱</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="email" id="email2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="myselect2" class="col-sm-2 control-label">角色</label>
+                        <div class="col-sm-10">
+                            <select id="myselect2"  class="form-control form-control-chosen" data-placeholder="请选择">
+                                <option name="authorityId" value="1">管理员</option>
+                                <option name="authorityId" value="2">博主</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="addUser">添加</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script th:inline="javascript">
+    $(function(){
+        //分页
+        //当前页码
+        var page = [[${page}]];
+        //总页码
+        var pageCount = [[${pageCount}]];
+        //分页
+        if(page==1){
+            $("#page").append("<li><a href='/admins/index?page=1' style='cursor:pointer;pointer-events: none'>&laquo;</a></li>");
+        }else{
+            $("#page").append("<li><a href='/admins/index?page="+(page-1)+"'>&laquo;</a></li>");
+        }
+        var ym =Math.floor((page-1)/5)*5;
+        for(var i=1;i<6;i++){
+            ym = ym+i;
+            var url='/admins/index?page='+ym+'&limit=4';
+            if(ym==page){
+                $("#page").append("<li  class='active'><a href='"+url+"'>"+ym+"</a></li>");
+            }else{
+                $("#page").append("<li><a href='"+url+"'>"+ym+"</a></li>");
+            }
+            ym =Math.floor((page-1)/5)*5;
+        }
+        if(page==pageCount){
+            $("#page").append("<li><a href='#' style='cursor:pointer;pointer-events: none'>&raquo;</a></li>");
+        }else{
+            $("#page").append("<li><a href='/admins/index?page="+(page+1)+"'>&raquo;</a></li>");
+        }
+
+        //修改按钮 获取id前缀为edit所有的按钮
+        var edits = $("button[id][id^='edit']");
+        var i = 0;
+        for(i=0;i<edits.length;i++){
+            console.log(edits[i]['id']);
+            var editId = edits[i]['id'];
+            $("#"+editId).click(function(){
+                var id = $(this).attr('id').substring(4,editId.length);
+                alert("更新id..."+id);
+                //var id = editId.substring(4,editId.length);
+                $.ajax({
+                    url:'/user/get/'+id,
+                    type:'get',
+                    success:function(data){
+                        $('#myModal').modal("show");
+                        $("#id").val(data.user.id);
+                        $("#username").val(data.user.username);
+                        $("#name").val(data.user.name);
+                        $("#email").val(data.user.email);
+                        $("#myselect").val(data.authorityId);
+                        console.log(data.authorityId);
+                    },
+                    error:function(){
+                        alert("获取失败");
+                    }
+                })
+            });
+        }
+        //提交修改
+        $("#tj").click(function (){
+            $.ajax({
+                url:'/user/edit',
+                type:'post',
+                data:{
+                    "id":$("#id").val(),
+                    "username":$("#username").val(),
+                    "name":$("#name").val(),
+                    "email":$("#email").val(),
+                    "authorityId":$("#myselect option:selected").val(),
+                    "isAdmin":true
+                },
+                success:function(data){
+                    if(data["success"]){
+                        layer.msg(data["message"]);
+                        window.location.reload();
+                    }
+                },
+                error:function(){
+                    layer.msg("修改失败");
+                    window.location.reload();
+                }
+            })
+        })
+
+        //添加
+        $("#add").click(function (){
+            $('#addModal').modal("show");
+        })
+
+        //提交添加
+        $("#addUser").click(function (){
+            $.ajax({
+                url:'/user/save',
+                type:'post',
+                data:{
+                    "username":$("#username2").val(),
+                    "password":$("#password2").val(),
+                    "name":$("#name2").val(),
+                    "email":$("#email2").val(),
+                    "authorityId":$("#myselect2 option:selected").val()
+                },
+                success:function(data){
+                    if(data["success"]){
+                        alert(data["message"]);
+                        window.location.reload();
+                    }
+                },
+                error:function(){
+                    layer.msg("添加失败");
+                    window.location.reload();
+                }
+            })
+        })
+
+        //删除 获取id前缀为del所有的按钮
+        var dels = $("button[id][id^='del']");
+        var y = 0;
+        for(y=0;y<dels.length;y++){
+            console.log(dels[y]['id']);
+            var delId = dels[y]['id'];
+            $("#"+delId).click(function(){
+                alert("删除...");
+                //获取id
+                var id = $(this).attr('id').substring(3,delId.length);
+                console.log("id--->"+id)
+                $.ajax({
+                    url:'/user/del/'+id,
+                    type:'get',
+                    success:function(data){
+                        alert("删除成功");
+                        window.location.reload();
+                    }
+                })
+            });
+        }
+
+        //模型框每次关闭清空数据
+        $(function() {
+            $('#myModal').on('hide.bs.modal',
+                function() {
+                    $("#id").val("");
+                    $("#username").val("");
+                    $("#name").val("");
+                    $("#email").val("");
+                })
+        });
+
+        //菜单管理
+        $(".menu").click(function () {
+            $(".menu").removeClass("active");
+            $(this).addClass("active");
+        })
+
+    })
+</script>
+</body>
+</html>

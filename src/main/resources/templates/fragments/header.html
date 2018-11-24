@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:fragment="header">
+    <meta charset="utf-8" />
+    <script src="/static/js/jquery-2.1.0.min.js" th:src="@{/js/jquery-2.1.0.min.js}"></script>
+    <script src="/static/bootstrap3.3.7/js/bootstrap.min.js" th:src="@{/bootstrap3.3.7/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}" media="all">
+    <script src="layui/layui.js" th:src="@{/layui/layui.js}"></script>
+    <link rel="stylesheet" href="/static/bootstrap3.3.7/css/bootstrap.min.css" th:href="@{/bootstrap3.3.7/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="/static/css/fonter.css" th:href="@{/css/fonter.css}">
+    <title th:text="${session.netName}"></title>
+</head>
+<body>
+<div class="container-fluid" th:fragment="top">
+    <!--标题-->
+    <div class="row">
+        <nav class="navbar navbar-inverse" role="navigation">
+            <div class="container-fluid col-md-9 col-md-offset-1">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#" th:href="@{/index2}"><span class="glyphicon glyphicon-home"></span>&nbsp;首页</a>
+                </div>
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#" th:href="@{/blog/page}"><span class="glyphicon glyphicon-tree-deciduous"></span>&nbsp;最新</a>
+                </div>
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#" th:href="@{/blog/fire}"><span class="glyphicon glyphicon-fire"></span>&nbsp;最热</a>
+                </div>
+                <div>
+                    <form class="navbar-form navbar-left" role="search" action="/blog/search" th:action="@{/blog/search}" method="get">
+                        <div class="form-group">
+                            <input type="text" name="title" class="form-control" placeholder="搜索">
+                        </div>
+                        <button type="submit" class="btn glyphicon glyphicon-search"></button>
+                    </form>
+                </div>
+
+                <!--已经登录过的-->
+                <!--<div sec:authorize="isAuthenticated()"  class="row" >-->
+                    <!--<div class="dropdown">-->
+                        <!--<a class=" dropdown-toggle" href="/u/waylau" th:href="@{'/u/' + ${#authentication.name}}" data-toggle="dropdown"><span sec:authentication="name"></span></a>-->
+                        <!--<div class="dropdown-menu" >-->
+                            <!--<a class=" dropdown-item" href="/u/waylau" th:href="@{'/u/' + ${#authentication.name}}">个人主页</a>-->
+                            <!--<a class="dropdown-item" href="/u/waylau/profile" th:href="@{'/u/' + ${#authentication.name}} + '/profile'" >个人设置</a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--<a href="/u/waylau/blogs/edit" th:href="'/u/' + ${#authentication.name} + '/blogs/edit'" class="btn btn-success">写博客</a>-->
+                    <!--</div>-->
+                    <!--<form action="/logout" th:action="@{/logout}" method="post">-->
+                        <!--<input class="btn btn-outline-success " type="submit" value="退出">-->
+                    <!--</form>-->
+                <!--</div>-->
+
+                <div sec:authorize="isAuthenticated()"  class="row" >
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/login" th:href="@{'/blog/'+${#authentication.name}+'/index'}"><span class="glyphicon glyphicon-user"></span>&nbsp;<span sec:authentication="name"></span></a></li>
+                        <li><a href="/space/username/setting" th:href="@{'/space/'+${#authentication.name}+'/setting'}"><span class="glyphicon glyphicon-cog"></span>&nbsp;个人设置</a></li>
+                        <li><a href="/register" th:href="'/blog/edit/'+${#authentication.name}"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;写博客</a></li>
+                        <li><a href="/logout"><span class="glyphicon glyphicon-off"></span>&nbsp;退出</a></li>
+                    </ul>
+                </div>
+
+                <!--未登录的-->
+                <div sec:authorize="isAnonymous()">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/login"><span class="glyphicon glyphicon-user"></span>登录</a></li>
+                        <li><a href="/register"><span class="glyphicon glyphicon-log-in"></span>&nbsp;注册</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<div class="container-fluid footer" th:fragment="font">
+    <span>天涯海角</span>
+</div>
+
+</body>
+</html>

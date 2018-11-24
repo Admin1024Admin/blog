@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="~{fragments/fonter::header}">
+    <script src="/static/js/jquery-2.1.0.min.js" th:src="@{/js/jquery-2.1.0.min.js}"></script>
+    <script src="/static/bootstrap3.3.7/js/bootstrap.min.js" th:src="@{/bootstrap3.3.7/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" href="/static/bootstrap3.3.7/css/bootstrap.min.css" th:href="@{/bootstrap3.3.7/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="/static/css/fonter.css" th:href="@{/css/fonter.css}">
+</head>
+<body style="background:url('/static/images/setting_bj.jpg') no-repeat;background-size: cover">
+<!--头部-->
+<div th:replace="~{fragments/header::top}"></div>
+<!--中部-->
+<div class="container">
+    <div class="row">
+        <!--头像-->
+        <div class="col-md-3" style="height:200px;position:relative;">
+            <!--<img src="/static/images/qq.jpg" th:src="@{/images/qq.jpg}" class="img-thumbnail" style="height:200px;width:200px;">-->
+            <!--<div style="background:#F8F8FF;width:180px;position:absolute;height:20px;top:100px;left:24px;z-index: 2;text-align: center;opacity:0.8;" >-->
+                <!--<a href="">修改头像</a>-->
+            <!--</div>-->
+
+            <div class="up-img-cover"  id="up-img-touch" >
+                <img class="img-thumbnail" alt="点击图片上传" src="img/hu.jpg" th:src="${user.avatar}"
+                     data-am-popover="{position:'left',content: '点击上传', trigger: 'hover focus'}" >
+                <div style="background:#F8F8FF;width:180px;position:absolute;height:26px;top:100px;left:24px;z-index: 2;text-align: center;opacity:0.8;" >
+                    <span>修改头像</span>
+                </div>
+            </div>
+        </div>
+        <div th:replace="~{users/setImg::touxiang}">
+        </div>
+        <!--资料信息-->
+        <div class="col-md-8">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;个人资料</h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form">
+                        <input type="hidden" th:value="${user.id}" id="userid">
+                        <div class="form-group">
+                            <label for="username" class="col-sm-2 control-label">账号</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="username" name="username" th:value="${user.username}" disabled="disabled" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm-2 control-label">邮箱</label>
+                            <div class="col-sm-6">
+                                <input type="email" class="form-control" id="email" name="email" th:value="${user.email}" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">昵称</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="name" name="name" th:value="${user.name}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-6">
+                                <input type="password" class="form-control" id="password" name="password" th:value="${user.password}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-6">
+                                <button type="button" class="btn btn-default" id="edit">修改</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--底部-->
+<div class="container-fluid nav2">
+    <span>天涯海角</span>
+</div>
+<script>
+    $(function(){
+        $("#edit").click(function(){
+            $.ajax({
+                url:"/user/edit",
+                type:"POST",
+                data:{
+                    id:$("#userid").val(),
+                    username:$("#username").val(),
+                    name:$("#name").val(),
+                    email:$("#email").val(),
+                    password:$("#password").val()
+                },
+                success:function(data){
+                    alert(data["success"]);
+                    if(data["success"]){
+                        alert(data["message"]);
+                        window.location.reload();
+                    }
+                },
+                error:function(){
+                    alert("失败");
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

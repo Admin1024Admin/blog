@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="~{fragments/fonter::header}">
+    <script src="/static/js/jquery-2.1.0.min.js" th:src="@{/js/jquery-2.1.0.min.js}"></script>
+    <script src="/static/bootstrap3.3.7/js/bootstrap.min.js" th:src="@{/bootstrap3.3.7/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" href="/static/bootstrap3.3.7/css/bootstrap.min.css" th:href="@{/bootstrap3.3.7/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="/static/css/fonter.css" th:href="@{/css/fonter.css}">
+</head>
+<body style="background:url('/static/images/blog_bj.jpg') no-repeat;background-size: cover">
+<!--头部-->
+<div th:replace="~{fragments/header::top}"></div>
+
+<!--中间主体部分-->
+<div class="container-fluid">
+    <!--左边部分-->
+    <div class="col-md-2 col-md-offset-1">
+    <ul class="list-group">
+        <li class="list-group-item">
+            <div class="row_bj">
+                <img src="img/qq.jpg" class="img-circle tx" th:src="${blog.user.avatar}">
+                <span style="font-size: 20px;margin-left: 10px;" th:text="${blog.user.name}">爱哭的毛毛虫</span>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row_bj">
+                <div class="column_bj" style="width: 100px;font-size: 20px;">
+                    <span>原创</span>
+                    <span th:text="${blogConut}">100</span>
+                </div>
+                <div class="column_bj" style="width: 100px;font-size: 20px;">
+                    <span>喜欢</span>
+                    <span th:text="${blog.likeSize}">100</span>
+                </div>
+                <div class="column_bj" style="width: 100px; font-size: 20px;">
+                    <span>评论</span>
+                    <span th:text="${commentNumber}">100</span>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row_bj" style="font-size: 18px;">
+                <div style="width:49%">
+                    <span>等级:100</span>
+                </div>
+                <div style="width:49%">
+                    <span th:text="${'访问'+blog.readSize}">访问:100</span>
+                </div>
+                <div style="width:49%">
+                    <span>排名:100</span>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item"><span style="font-size: 18px;;">邮箱:<a href="mailto:2372491762@qq.com" th:href="'mailto:'+${blog.user.email}" th:text="${blog.user.email}">2372491762@qq.com</a></span></li>
+    </ul>
+</div>
+<!--右边部分-->
+<div class="col-md-7" style="background: #fff;">
+    <div class="column_bj">
+        <!--标题-->
+        <div class="row_bj">
+            <div style="height:30px;width: 30px;border-radius: 50%;border:1px red solid;text-align: center;font-size: 20px;" class="row_bj">
+                <span style="font-weight: 800;margin-left:3px;">原</span>
+            </div>
+            <div style="font-size: 30px;font-weight:800;margin-left: 10px;;" th:text="${blog.title}">
+                史上最简单的 SpringCloud 教程 | 终章
+            </div>
+        </div>
+        <!--时间-->
+        <div class="row_bj" style="font-size: 18px;;">
+            <span th:text="'发表时间:'+${blog.createTime}">发表时间:2018-06-09 10:23:56</span>
+            <span style="margin-left: 20px;;" th:text="${blog.user.name}"><a href="#">爱哭的毛毛虫</a></span>
+            <span style="margin-left: 20px;;" th:text="${'阅读数:'+blog.readSize}">阅读数:500</span>
+            <span style="margin-left: 20px;;">标签:</span>
+            <div class="panel-body">
+                <span class="label label-default">springcloud</span>
+                <span class="label label-primary">springboot</span>
+                <span class="label label-success">java</span>
+            </div>
+        </div>
+        <div style="border:1px #ccc solid"></div>
+        <!--正文-->
+        <article class="post-content" th:utext="${blog.htmlContent}">
+            我们爱过<br>
+            得到过自己想要的		<br>
+            想象着会有很好的未来<br>
+            有你有我<br>
+            可是多年以后<br>
+            蓦然回首<br>
+            发现自己<br>
+            一无所有	<br>
+            真的			<br>
+            真的一无所有		<br>
+            可那时				<br>
+            我们没有了继续追逐的勇气		<br>
+            没有了再爱一次的勇气				<br>
+            我们的存在<br>
+            或许只是一次巧合<br>
+            可是为什么			<br>
+            如果我们像天上的流星	<br>
+            又为什么						<br>
+            会真实存在						<br>
+            感谢我们曾经遇见						<br>
+            感谢我们曾经寒暄						<br>
+            谢谢你们	<br>
+            带我走过寒暑冬夏<br>
+            青春不会有散场	<br>
+            青木
+        </article>
+        <div style="border:1px #ccc solid"></div>
+        <!--点赞和喜欢-->
+        <div class="row_bj" style="justify-content: center;margin-top:20px;;">
+            <a href="#" style="color:#000" class="like" th:attr="url='/blog/like/'+${blog.id}"><span class="glyphicon glyphicon-heart" style="font-size: 50px;color:red;"></span></a>
+            <a href="#" style="color:#000" class="like" th:attr="url='/blog/like/'+${blog.id}"><span class="glyphicon glyphicon-thumbs-up" style="font-size: 50px;margin-left: 30px;;"></span></a>
+        </div>
+        <!--发表评论-->
+        <div style="margin-top: 20px;;">
+            <form class="form-horizontal" role="form" maxlength="200">
+                <input type="hidden" name="uid" th:value="${user.id}" id="uid">
+                <input type="hidden" name="pid" th:value="${blog.id}" id="bid">
+                <textarea style="width:100%;resize: none;" rows="6" placeholder="评论" id="comment"></textarea>
+                <input type="button" class="btn-info pull-right" value="评论" style="margin-top:10px;" id="pl">
+            </form>
+        </div>
+        <!--评论区-->
+        <div class="column_bj">
+            <div class="row_bj" th:each="c,userStat:${comments}" style="margin-top: 10px;border-bottom: 3px #F4F4F4 solid;">
+                <!--左边-->
+                <div class="row_bj col-md-2">
+                    <div class="column_bj">
+                        <img src="img/qq.jpg" class="img-circle tx" th:src="${c.user.avatar}">
+                        <span style="font-size: 18px;" th:text="${c.user.name}">爱哭的毛毛虫</span>
+                    </div>
+                </div>
+                <!--右边-->
+                <div class="column_bj col-md-10">
+                    <div style="word-break: break-all; word-wrap:break-word;margin-left: 10px;font-size: 18px;" th:text="${c.content}">
+                        cxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihaocxxxxxxnihao
+                    </div>
+                    <div class="row_bj col-md-4 col-md-offset-8" style="font-size: 16px;">
+                        <span th:text="${userStat.index}+1+'楼'">1楼</span>
+                        <span style="margin-left: 10px;" th:text="${c.createTime}">2018-06-02 9:56:56</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--推荐-->
+<div class="col-md-2">
+    <!--热门文章-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-fire"></span>&nbsp;特别推荐
+            </h3>
+        </div>
+        <div class="panel-body">
+            <ul class="list-group" style="width:100%;">
+                <li class="list-group-item" th:each="t:${titles}"><a th:href="'/blog/'+${t.id}" th:text="${t.title}">免费域名注册</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+<!--底部-->
+<div th:replace="~{fragments/header::font}"></div>
+<script>
+    $(function(){
+        $("#pl").click(function(){
+            var comment = $("#comment").val();
+            var uid = $("#uid").val();
+            var bid = $("#bid").val();
+            $.ajax({
+                url:"/blog/commont",
+                type:"POST",
+                data:{
+                    "uid":uid,
+                    "bid":bid,
+                    "contont":comment,
+                },
+                success:function (data) {
+                    alert(data["message"]);
+                    if(data["success"]){
+                        window.location.reload();
+                    }
+                }
+            })
+        })
+        $(".like").click(function () {
+            var url = $(this).attr("url");
+            var a = $(this);
+            var num =  parseInt(a.text())+1;
+            $.get(url,function (data) {
+                if(data=="success"){
+                    alert("点赞成功!!!");
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="utf-8" />
+    <script src="/static/js/jquery-2.1.0.min.js" th:src="@{/js/jquery-2.1.0.min.js}"></script>
+    <script src="/static/bootstrap3.3.7/js/bootstrap.min.js" th:src="@{/bootstrap3.3.7/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}" media="all">
+    <script src="layui/layui.js" th:src="@{/layui/layui.js}"></script>
+    <link rel="stylesheet" href="/static/bootstrap3.3.7/css/bootstrap.min.css" th:href="@{/bootstrap3.3.7/css/bootstrap.min.css}">
+    <script src="/static/js/calendar.js" th:src="@{/js/calendar.js}"></script>
+    <link rel="stylesheet" href="/static/css/calendar.css" th:href="@{/css/calendar.css}">
+    <title th:text="${session.netName}"></title>
+    <style>
+        /*竖布局*/
+        .column_bj{
+            display: flex;
+            flex-direction: column;
+        }
+        /*横向布局*/
+        .row_bj{
+            display: flex;
+            flex-direction: row;
+        }
+        /*头像*/
+        .tx{
+            height:70px;
+            width:70px;
+        }
+        /*标题*/
+        .title{
+            word-wrap:break-word;
+            margin-left: 20px;
+            font-size: 30px;
+            color: #419641;
+            font-weight: 500;
+        }
+        /*正文*/
+        .content{
+            word-wrap:break-word;
+            font-size: 20px;;
+            color: #999;
+        }
+        /*底部*/
+        .foot{
+            font-size: 18px;
+        }
+        .bqSize{
+            font-size: 20px;
+        }
+
+
+    </style>
+    <script th:inline="javascript">
+        $(function(){
+            var pageCount = [[${pageCount}]];
+            var page = [[${page}]];
+            //如果为第一页则禁用上一页
+            if(page==1){
+                $("#previous").css({"cursor":"pointer","pointer-events": "none"});
+            }
+            //如果为最后一页则禁用下一页
+            if(page==pageCount){
+                $("#next").css({"cursor":"pointer","pointer-events": "none"});
+            }
+        })
+    </script>
+</head>
+<body style="background:url('/static/images/userspace.jpg') no-repeat;background-size: cover">
+<!--头部-->
+<div th:replace="~{fragments/header::top}"></div>
+<!--主体-->
+<div class="container-fluid">
+    <div class="col-md-12 row_bj">
+        <!--左边-->
+        <div class="col-md-4 column_bj">
+            <!--日历-->
+            <div id="calendar" class="calendar"></div>
+            <!--昵称-->
+            <div class="col-md-8 col-md-offset-2 column_bj" style="font-size: 18px;margin-top:20px;;">
+                <span th:text="'昵称:'+${user.name}">昵称:爱哭的毛毛虫</span>
+                <span style="margin-top:10px;" th:text="'园龄:'+${day}">园龄:20天</span>
+                <span style="margin-top:10px;">搜索:</span>
+                <div style="margin-top:10px;">
+                    <form class="navbar-form navbar-left" role="search" action="/blog/search" th:action="@{/blog/search}" method="get">
+                        <div class="input-group">
+                            <input type="text" name="title" class="form-control">
+                            <span class="input-group-btn">
+                                        <button class="btn btn-default" type="submit">Go!</button>
+                                    </span>
+                        </div><!-- /input-group -->
+                    </form>
+                </div><!-- /.col-lg-6 -->
+                <span style="margin-top:10px;">我的博客:</span>
+                <div>
+                    <ul class="list-group">
+                        <li class="list-group-item" th:each="b:${blogs}" th:utext="'<a href=/blog/'+${b.id}+'>'+${b.title}+'</a>'">springboot</li>
+                    </ul>
+                </div>
+                <span style="margin-top:10px;">我的标签:</span>
+                <div class="bqSize" id="tags">
+                    <div class="label label-default" th:each="t:${tags}" th:text="${t}">默认标签</div>
+                    <!--<span class="label label-primary">主要标签</span>-->
+                    <!--<span class="label label-success">成功标签</span>-->
+                    <!--<span class="label label-info">信息标签</span>-->
+                    <!--<span class="label label-danger">危险标签</span>-->
+                </div>
+                <span style="margin-top:10px;">阅读排行榜:</span>
+                <div>
+                    <ul class="list-group">
+                        <li class="list-group-item">springboot</li>
+                        <li class="list-group-item">springcloud</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!--右边-->
+        <div class="col-md-7">
+            <div clas="col-md-12">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#">个人博客</a></li>
+                </ul>
+            </div>
+            <div style="margin-top:20px;">
+                <img src="/static/images/1.jpg" th:src="@{/images/user_top.jpg}" class="img-rounded" style="width:100%;height:200px;">
+            </div>
+            <div style="border-bottom:5px #F5F5F5 solid;padding:0px 10px 10px 10px;margin-top: 10px;" th:each="b:${blogs}">
+                <div class="column_bj">
+                    <!--标题-->
+                    <div class="row_bj">
+                        <img src="img/qq.jpg" th:src="${b.user.avatar}" class="img-circle tx">
+                        <h2 class="text-primary" style="margin-left: 10px;"><a href="/blog/" th:href="'/blog/'+${b.id}" th:text="${b.title}" style="color:#00F5FF">大话Spirng Cloud微服务</a></h2>
+                    </div>
+                    <!--博客摘要-->
+                    <div class="text-muted" th:text="'&nbsp;&nbsp;&nbsp;&nbsp;'+${b.summary}" style="font-size: 18px;color:#4F4F4F;">
+                        xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    </div>
+                    <span><a href="#" class="text-info" th:href="'/blog/'+${b.id}">>>>查看全文</a></span>
+                    <br>
+                    <!--底部-->
+                    <div class="foot row_bj">
+                        <span class="text-info"><a href="" th:href="'/blog/'+${b.user.username}+'/index'" th:text="${b.user.name}" style="color:#4EEE94">爱哭的毛毛虫</a></span>发表于<span th:text="${#dates.format(b.createTime,'yyyy-MM-dd')}">2018-09-27</span>
+                        <span style="margin-left: 20px;" class="glyphicon glyphicon-eye-open" th:text="${b.readSize}">100</span>
+                        <a href="#" class="like" th:attr="url='/blog/like/'+${b.id}"><span style="margin-left: 20px;" class="glyphicon glyphicon-thumbs-up" th:text="${b.likeSize}">100</span></a>
+                        <span style="margin-left: 20px;" class="glyphicon glyphicon-comment" th:text="${b.commentSize}">100</span>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:20px;">
+                <ul class="pager">
+                    <li><a href="#" th:href="'/blog/'+${user.username}+'/index?page='+${page-1}+'&uid='+${user.id}" id="previous">Previous</a></li>
+                    <li><a href="#" th:href="'/blog/'+${user.username}+'/index?page='+${page+1}+'&uid='+${user.id}" id="next">Next</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--底部-->
+<div th:replace="~{fragments/header::font}"></div>
+</body>
+</html>
